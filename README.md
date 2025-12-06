@@ -1,5 +1,3 @@
-"I'm so sorry for not recording a video my microphone isn't working properly, so you probably wouldn't be able to understand me clearly anyway."
-
 # My Intro
 * Hi my name is Abhishek Kori i am AI/ML Engineer and Data Scientist with over three years of experience building advanced machine learning, RAG, and generative AI systems.
 
