@@ -1,25 +1,22 @@
-# nodes/retrieve.py
-
 from tools.bigtool_picker import BigtoolPicker
 from mcp.atlas_client import AtlasClient
 
 def retrieve_node(state: dict):
-    print("\n--- [RETRIEVE] Fetching PO / GRN / Historical Invoices ---")
+    print("\n--- [RETRIEVE] Fetching PO, GRN, and history ---")
 
     erp_tool = BigtoolPicker.select("erp_connector")
     print(f"[RETRIEVE] ERP connector selected: {erp_tool}")
 
     atlas = AtlasClient()
-    invoice_id = state["invoice_payload"]["invoice_id"]
-
-    pos = atlas.fetch_po(invoice_id)
-    grns = atlas.fetch_grn(invoice_id)
+    po = atlas.fetch_po(state["invoice_payload"]["invoice_id"])
+    grn = atlas.fetch_grn(state["invoice_payload"]["invoice_id"])
     history = atlas.fetch_history(state["invoice_payload"]["vendor_name"])
 
-    print(f"[RETRIEVE] Retrieved {len(pos)} POs, {len(grns)} GRNs, {len(history)} history items.")
+    print("[RETRIEVE] Data fetched successfully.")
 
     return {
-        "matched_pos": pos,
-        "matched_grns": grns,
+        **state,
+        "matched_pos": po,
+        "matched_grns": grn,
         "history": history
     }

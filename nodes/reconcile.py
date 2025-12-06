@@ -1,16 +1,13 @@
-# nodes/reconcile.py
-
 def reconcile_node(state: dict):
     print("\n--- [RECONCILE] Building Accounting Entries ---")
 
     entries = [
-        {"account": "Expenses", "debit": state["invoice_payload"]["amount"]},
-        {"account": "Cash/Bank", "credit": state["invoice_payload"]["amount"]}
+        {"account": "Accounts Payable", "amount": state["invoice_payload"]["amount"], "type": "credit"},
+        {"account": "Expense", "amount": state["invoice_payload"]["amount"], "type": "debit"}
     ]
 
-    print("[RECONCILE] Accounting entries created.")
-
     return {
+        **state,
         "accounting_entries": entries,
         "reconciliation_report": {"status": "OK"}
     }

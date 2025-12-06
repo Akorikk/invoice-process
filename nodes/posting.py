@@ -1,18 +1,16 @@
-# nodes/posting.py
-
 from tools.bigtool_picker import BigtoolPicker
+import uuid
 
 def posting_node(state: dict):
-    print("\n--- [POSTING] Posting Invoice to ERP & Scheduling Payment ---")
+    print("\n--- [POSTING] Posting to ERP & Scheduling Payment ---")
 
     erp_tool = BigtoolPicker.select("erp_connector")
-    print(f"[POSTING] ERP selected: {erp_tool}")
-
-    txn_id = "ERP-TXN-98765"
-    payment_id = "PAY-554433"
+    print(f"[POSTING] ERP tool selected: {erp_tool}")
 
     return {
+        **state,
         "posted": True,
-        "erp_txn_id": txn_id,
-        "scheduled_payment_id": payment_id
+        "erp_txn_id": str(uuid.uuid4()),
+        "scheduled_payment_id": str(uuid.uuid4())
     }
+

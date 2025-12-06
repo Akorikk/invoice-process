@@ -1,18 +1,20 @@
-# nodes/checkpoint_hitl.py
-
 from app.checkpoint_store import CheckpointStore
+import uuid
 
 def checkpoint_node(state: dict):
-    print("\n--- [CHECKPOINT] Match Failed — Triggering Human Review ---")
+    print("\n--- [CHECKPOINT_HITL] Creating Checkpoint ---")
 
     store = CheckpointStore()
 
-    invoice_id = state["invoice_payload"]["invoice_id"]
-    checkpoint_id, review_url = store.save_checkpoint(invoice_id, state)
+    checkpoint_id, review_url = store.save_checkpoint(
+        state["invoice_payload"]["invoice_id"],
+        state
+    )
 
-    print(f"[CHECKPOINT] Saved checkpoint {checkpoint_id}, Review URL: {review_url}")
+    print(f"[CHECKPOINT] Saved checkpoint {checkpoint_id}, URL: {review_url}")
 
     return {
+        **state,
         "checkpoint_id": checkpoint_id,
         "review_url": review_url,
         "paused_reason": "MATCH_FAILED"

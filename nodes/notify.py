@@ -1,5 +1,3 @@
-# nodes/notify.py
-
 from tools.bigtool_picker import BigtoolPicker
 
 def notify_node(state: dict):
@@ -8,12 +6,9 @@ def notify_node(state: dict):
     email_tool = BigtoolPicker.select("email")
     print(f"[NOTIFY] Email tool selected: {email_tool}")
 
-    notify_status = {
-        "vendor": "sent",
-        "finance_team": "sent"
-    }
-
     return {
-        "notify_status": notify_status,
+        **state,
+        "notify_status": {"email": "SENT", "slack": "SENT"},
         "notified_parties": ["vendor", "finance_team"]
     }
+

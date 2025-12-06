@@ -1,23 +1,19 @@
-# nodes/match_two_way.py
-
 from mcp.common_client import CommonClient
 
 def match_two_way_node(state: dict):
-    print("\n--- [MATCH] Performing 2-Way Invoice Matching ---")
+    print("\n--- [MATCH_TWO_WAY] Matching Invoice vs PO ---")
 
     common = CommonClient()
+    score = common.compute_match_score(state, state["matched_pos"])
 
-    score = common.compute_match_score(state["invoice_payload"], state["matched_pos"])
-    print(f"[MATCH] Match score computed: {score}")
+    match_result = "MATCHED" if score >= 0.90 else "FAILED"
 
-    threshold = 0.9  # force HITL for demo
-
-    match_result = "FAILED" if score < threshold else "MATCHED"
-    print(f"[MATCH] Result: {match_result}")
+    print(f"[MATCH_TWO_WAY] match_score={score}, result={match_result}")
 
     return {
+        **state,
         "match_score": score,
         "match_result": match_result,
         "tolerance_pct": 5,
-        "match_evidence": {"po_match": score}
+        "match_evidence": {"source": "simple_match_mock"}
     }

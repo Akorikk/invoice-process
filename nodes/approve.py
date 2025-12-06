@@ -1,18 +1,11 @@
-# nodes/approve.py
-
 def approve_node(state: dict):
-    print("\n--- [APPROVE] Applying Approval Workflow ---")
+    print("\n--- [APPROVE] Running Approval Policy ---")
 
     amount = state["invoice_payload"]["amount"]
-
-    if amount < 5000:
-        status = "AUTO_APPROVED"
-    else:
-        status = "ESCALATED"
-
-    print(f"[APPROVE] Approval status: {status}")
+    approval_status = "APPROVED" if amount < 1000 else "ESCALATED"
 
     return {
-        "approval_status": status,
-        "approver_id": "system"
+        **state,
+        "approval_status": approval_status,
+        "approver_id": "system_auto" if approval_status == "APPROVED" else "manager_01"
     }
