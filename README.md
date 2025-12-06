@@ -65,3 +65,25 @@ python main.py --api
 python main.py --resume checkpoint_state.json
 
 this project os about Build a 12-stage autonomous agent that reads invoices, extracts data, validates, matches with purchase orders, and posts to accounting systems — automatically choosing the best tools (OCR, ERP, enrichment, etc.) and pausing for a human only when something doesn’t match.
+
+---
+## Demo files added
+
+- `demo/sample_invoice.json` — sample invoice payload for the demo.
+- `demo/run_demo.ps1` — PowerShell demo runner: creates venv, starts API+workflow, queries the human-review endpoint, and auto-accepts the first checkpoint if present.
+- `tests/test_hitl_flow.py` — pytest that validates HITL endpoints and posts a resume decision if a checkpoint exists.
+- `scripts/validate_workflow.py` — small validator to ensure `workflow.json` contains required root keys.
+
+Quick demo (PowerShell):
+
+```powershell
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+.\demo\run_demo.ps1
+```
+
+Run tests:
+
+```powershell
+pytest -q
+```

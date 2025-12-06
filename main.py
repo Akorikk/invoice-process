@@ -30,7 +30,8 @@ def resume_workflow(state_file):
     state = json.load(open(state_file))
 
     # ⭐ IMPORTANT FIX: Resume from RECONCILE
-    graph = build_graph(resume_stage="RECONCILE")
+    # Build graph and invoke with existing checkpoint state.
+    graph = build_graph()
 
     result = graph.invoke(state)
 
@@ -39,8 +40,8 @@ def resume_workflow(state_file):
 
 
 def start_api():
-    print("\nStarting HITL API server at http://127.0.0.1:8001\n")
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    print("\nStarting HITL API server at http://127.0.0.1:8000\n")
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
 if __name__ == "__main__":

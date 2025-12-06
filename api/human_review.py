@@ -44,9 +44,20 @@ def submit_decision(data: dict):
 
     store.resolve_checkpoint(checkpoint_id, decision)
 
+    # attach reviewer metadata and persist a resume state file
+    state["human_decision"] = decision
+    state["reviewer_id"] = data.get("reviewer_id")
+    state["review_notes"] = data.get("notes")
+
+    resume_file = f"checkpoint_state_{checkpoint_id}.json"
+    with open(resume_file, "w") as f:
+        import json
+        json.dump(state, f, indent=2)
+
     resume_token = f"resume-{checkpoint_id}-token"
 
     return {
         "resume_token": resume_token,
-        "next_stage": "RECONCILE" if decision == "ACCEPT" else "COMPLETE"
+        "next_stage": "RECONCILE" if decision == "ACCEPT" else "COMPLETE",
+        "resume_file": resume_file
     }

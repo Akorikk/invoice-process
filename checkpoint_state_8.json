@@ -93,7 +93,7 @@
   "match_evidence": {
     "source": "simple_match_mock"
   },
-  "checkpoint_id": 8,
-  "review_url": "/human-review/review/INV-001",
-  "paused_reason": "MATCH_FAILED"
+  "human_decision": "ACCEPT",
+  "reviewer_id": "test_user",
+  "review_notes": null
 }
