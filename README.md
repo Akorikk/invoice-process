@@ -1,104 +1,155 @@
-# invoice-process
+"I'm so sorry for not recording a video my microphone isn't working properly, so you probably wouldn't be able to understand me clearly anyway."
 
-This repository is a LangGraph-style Invoice Processing demo implementing a 12-stage workflow with Human-In-The-Loop (HITL), Bigtool dynamic tool selection, and MCP client orchestration.
+# My Intro
+* Hi my name is Abhishek Kori i am AI/ML Engineer and Data Scientist with over three years of experience building advanced machine learning, RAG, and generative AI systems.
 
-What is included
-- LangGraph workflow builder: `app/graph_builder.py`
-- Nodes for all stages: `nodes/*` (INTAKE → COMPLETE)
-- Bigtool mock selector: `tools/bigtool_picker.py`
-- MCP client mocks: `mcp/common_client.py`, `mcp/atlas_client.py`
-- Checkpoint persistence: `app/checkpoint_store.py`
-- HITL API endpoints: `api/human_review.py` + `api/server.py`
-- Demo runner: `main.py` (runs workflow and starts API)
-- Full workflow specification: `workflow.json`
+* I specialize in LLMs, NLP, and modern MLOps, and I work extensively with the latest AI agent frameworks including LangChain, LangGraph, LangSmith, and Microsoft AutoGen, where I design multi-AI-agent workflows that can reason, collaborate, and automate complex tasks.
 
-Quick setup
-1. Create a Python virtual environment & activate it (PowerShell):
+* Also i woul not say experience but i have good amount of study in building LLM and SLM from scratch. i have writen artical on medium of my study on LLM have a look if you have any intrest in my study unterstanding --> https://medium.com/@code2ai
 
-```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
+* I'm currently working on an AI project to develop a chatbot integrated with Retrieval Augmented Generation (RAG) technology, tailored for university use. This chatbot will serve as a comprehensive resource, providing detailed information on colleges, teachers, faculty members, and much more. It will proactively notify students about upcoming exams, events, and teacher related updates. Additionally, students can learn any subject such as math by simply uploading PDFs or other materials, and the chatbot will generate visualizations to help explain concepts more effectively for better understanding. The system will include many other features to enhance the educational experience.
 
-2. Run the demo (this will execute the workflow with a sample invoice and start the HITL API server):
 
-```powershell
+# About Assignmnet 
+
+* This project implements a 12-stage autonomous AI agent pipeline that reads invoices, extracts data, validates, matches them against Purchase Orders (PO), enriches vendor data, interacts with ERP connectors, and posts accounting entries.
+
+The system automatically chooses the best OCR, ERP, and enrichment tools using a dynamic tool-selector, and pauses only when a matching error requires Human-In-The-Loop (HITL) approval.
+
+# Folder Structure
+invoice-process/
+│
+├── api/
+│   ├── server.py               → FastAPI app
+│   └── human_review.py         → HITL endpoints
+│
+├── app/
+│   ├── graph_builder.py        → Builds 12-stage workflow
+│   ├── checkpoint_store.py     → SQLite checkpoint manager
+│   └── state_manager.py        → Updates workflow state
+│
+├── nodes/                      → All workflow task nodes
+│   ├── intake.py
+│   ├── understand.py
+│   ├── prepare.py
+│   ├── retrieve.py
+│   ├── match_two_way.py
+│   ├── checkpoint_hitl.py
+│   ├── hitl_decision.py
+│   ├── reconcile.py
+│   ├── approve.py
+│   ├── posting.py
+│   ├── notify.py
+│   └── complete.py
+│
+├── tools/
+│   └── bigtool_picker.py       → Random tool selector
+│
+├── mcp/
+│   ├── common_client.py        → Normalization + flags + matching
+│   └── atlas_client.py         → Vendor enrichment + PO/GRN fetch
+│
+├── checkpoint_state.json       → Saved workflow state (auto)
+├── checkpoints.db              → HITL database
+├── main.py                     → Run workflow manually
+└── test_workflow.py            → Full automated demo
+
+
+# Key Features
+* ✅ 12-Stage End-to-End Agentic Workflow
+1. Intake
+2. Understand (OCR)
+3. Prepare (Normalization + Enrichment)
+4. Retrieve (PO / GRN / History)
+5. Two-Way Match
+6. Checkpoint HITL Pause
+7. HITL Decision
+8. Reconcile
+9. Approve
+10. Posting (ERP)
+11. Notify
+12. Complete
+
+
+# 🤖 Dynamic Multi-Tool Selection
+
+Tools are selected automatically:
+OCR → Google Vision / AWS Textract / Tesseract
+ERP Connector → SAP Sandbox / Netsuite / Mock ERP
+Email → SendGrid / SES / Smartlead
+Data Enrichment → PDL / Clearbit / Vendor DB
+This simulates real-world autonomous multi-agent behaviour.
+
+
+# 🧑‍💼 Human-In-The-Loop (HITL) Approval
+If the invoice fails PO matching:
+the workflow pauses
+data is saved to SQLite
+a reviewer must approve/reject via REST API
+workflow resumes automatically
+
+# 📡 FastAPI Server for HITL
+The project exposes:
+GET /human-review/pending → list pending invoices
+POST /human-review/decision → submit ACCEPT / REJECT
+
+# 🧪 Automated Demo Script Included
+Run test_workflow.py to:
+execute full workflow
+trigger HITL
+automatically approve invoice
+resume workflow
+complete invoice posting
+Perfect for demos or video recording.
+
+# 🚀 How to Run the Project
+
 python main.py
-```
+This executes all 12 stages until the HITL checkpoint. After a failed PO match, the system generates: checkpoint_state.json
 
-3. Inspect Human Review queue (while server running):
-
-```powershell
-curl http://127.0.0.1:8000/human-review/pending
-```
-
-4. Submit a human decision (example JSON):
-
-```powershell
-curl -X POST http://127.0.0.1:8000/human-review/decision -H "Content-Type: application/json" -d '{"checkpoint_id":1,"decision":"ACCEPT","notes":"Ok","reviewer_id":"rev-1"}'
-```
-
-Notes & mapping to assignment
-- The full workflow spec (Appendix-1) is in `workflow.json`.
-- Checkpoints are persisted to `checkpoints.db` by default (SQLite).
-- Bigtool picks tools randomly from the defined pools; logs show choices.
-- MCP clients are mocked to simulate COMMON/ATLAS abilities.
-
-Submission checklist (recommended)
-- Ensure `workflow.json` is present and up-to-date (done).
-- Record a short demo video showing:
-	- Running `main.py` and captured logs
-	- Opening `/human-review/pending` and making a decision
-	- Workflow resuming after decision
-- Attach `workflow.json`, the repo link, and demo video link in your email submission.
-
-If you want, I can:
-- Run the demo here and capture output logs (if environment allows), or
-- Add a small script to produce a demo log file and sanitized outputs for submission.
-
-Enjoy — let me know which next step you want me to take.
-
-
-runn 
-python main.py
-python main.py --api
-python main.py --resume checkpoint_state.json
-
-this project os about Build a 12-stage autonomous agent that reads invoices, extracts data, validates, matches with purchase orders, and posts to accounting systems — automatically choosing the best tools (OCR, ERP, enrichment, etc.) and pausing for a human only when something doesn’t match.
-
----
-## Demo files added
-
-- `demo/sample_invoice.json` — sample invoice payload for the demo.
-- `demo/run_demo.ps1` — PowerShell demo runner: creates venv, starts API+workflow, queries the human-review endpoint, and auto-accepts the first checkpoint if present.
-- `tests/test_hitl_flow.py` — pytest that validates HITL endpoints and posts a resume decision if a checkpoint exists.
-- `scripts/validate_workflow.py` — small validator to ensure `workflow.json` contains required root keys.
-
-Quick demo (PowerShell):
-
-```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-.\demo\run_demo.ps1
-```
-
-Run tests:
-
-```powershell
-pytest -q
-```
-
-python mai.py
-
+* Start HITL API Server by running 
 python main.py --api
 
- http://127.0.0.1:8000/human-review/pending
+* View Pending Human Reviews
+ run in browser --> http://127.0.0.1:8000/human-review/pending
+ Example output: {
+  "items": [
+    {
+      "checkpoint_id": 10,
+      "invoice_id": "INV-001",
+      "review_url": "/human-review/review/INV-001",
+      "reason_for_hold": "MATCH_FAILED"
+    }
+  ]
+}
 
-
-
+* Submit Human Decision
 curl -X POST "http://127.0.0.1:8000/human-review/decision" ^
 -H "Content-Type: application/json" ^
 -d "{\"checkpoint_id\": 10, \"decision\": \"ACCEPT\", \"reviewer_id\": \"demo_user\"}"
 
+API response includes the resume token and file:
+{
+  "resume_token": "resume-10-token",
+  "next_stage": "RECONCILE",
+  "resume_file": "checkpoint_state_10.json"
+}
 
+* Resume Workflow
 python main.py --resume checkpoint_state_10.json
+
+Workflow now runs the remaining stages:
+
+Reconcile
+
+Approval
+
+Posting
+
+Notification
+
+Completion
+
+Final output contains:
+
+"status": "COMPLETE"

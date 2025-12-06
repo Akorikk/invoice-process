@@ -1,5 +1,3 @@
-# main.py
-
 import argparse
 from app.graph_builder import build_graph
 import uvicorn
@@ -73,7 +71,7 @@ if __name__ == "__main__":
 
     result = run_workflow(sample_invoice)
 
-    # Save state if HITL required
+    
     if "match_result" in result and result["match_result"] == "FAILED":
         with open("checkpoint_state.json", "w") as f:
             json.dump(result, f, indent=2)

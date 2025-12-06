@@ -12,8 +12,8 @@
       "invoice_image.png"
     ]
   },
-  "raw_id": "raw-2c85b41a-ea99-436a-8dfc-1c5680b71e54",
-  "ingest_ts": "2025-12-06T10:38:10.316292",
+  "raw_id": "raw-118df68b-98fd-435c-8aff-10cdce852dca",
+  "ingest_ts": "2025-12-06T11:36:56.902780",
   "validated": true,
   "parsed_invoice": {
     "invoice_text": "Mock OCR text extracted from invoice image...",
@@ -93,7 +93,7 @@
   "match_evidence": {
     "source": "simple_match_mock"
   },
-  "checkpoint_id": 13,
+  "checkpoint_id": 14,
   "review_url": "/human-review/review/INV-001",
   "paused_reason": "MATCH_FAILED"
 }
