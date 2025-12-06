@@ -53,6 +53,20 @@ invoice-process/
 └── test_workflow.py            → Full automated demo
 
 
+# Requirements
+langgraph>=0.2.24
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-core>=0.2.0
+fastapi>=0.110.0
+uvicorn>=0.30.1
+pydantic>=2.7.1
+sqlalchemy>=2.0.30
+python-dotenv>=1.0.1
+requests>=2.31.0
+pytest>=7.4.0
+
+
 # Key Features
 * ✅ 12-Stage End-to-End Agentic Workflow
 1. Intake
