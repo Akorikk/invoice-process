@@ -64,3 +64,4 @@ python main.py
 python main.py --api
 python main.py --resume checkpoint_state.json
 
+this project os about Build a 12-stage autonomous agent that reads invoices, extracts data, validates, matches with purchase orders, and posts to accounting systems — automatically choosing the best tools (OCR, ERP, enrichment, etc.) and pausing for a human only when something doesn’t match.
