@@ -12,8 +12,8 @@
       "invoice_image.png"
     ]
   },
-  "raw_id": "raw-243395d9-089a-4193-94b5-6d7b653d42d7",
-  "ingest_ts": "2025-12-06T08:53:02.340357",
+  "raw_id": "raw-60659797-3075-495b-ae40-034b9f88593d",
+  "ingest_ts": "2025-12-06T09:26:22.200820",
   "validated": true,
   "parsed_invoice": {
     "invoice_text": "Mock OCR text extracted from invoice image...",
@@ -94,6 +94,6 @@
     "source": "simple_match_mock"
   },
   "human_decision": "ACCEPT",
-  "reviewer_id": "test_user",
+  "reviewer_id": "demo_user",
   "review_notes": null
 }

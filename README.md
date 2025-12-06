@@ -87,3 +87,15 @@ Run tests:
 ```powershell
 pytest -q
 ```
+
+python mai.py
+
+python main.py --api
+
+ http://127.0.0.1:8000/human-review/pending
+
+
+
+curl -X POST "http://127.0.0.1:8000/human-review/decision" ^
+-H "Content-Type: application/json" ^
+-d "{\"checkpoint_id\": 10, \"decision\": \"ACCEPT\", \"reviewer_id\": \"demo_user\"}"
