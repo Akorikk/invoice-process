@@ -2,7 +2,7 @@
 
 class AtlasClient:
     """
-    Simulated ATLAS external server.
+    Simulated ATLAS external system connector.
     """
 
     def enrich_vendor(self, vendor_name):

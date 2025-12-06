@@ -1,7 +1,6 @@
 # app/graph_builder.py
 
 from langgraph.graph import StateGraph, END
-from app.state_manager import StateManager
 
 from nodes.intake import intake_node
 from nodes.understand import understand_node
@@ -17,12 +16,26 @@ from nodes.notify import notify_node
 from nodes.complete import complete_node
 
 
-def build_graph():
+def build_graph(resume_stage=None):
+    """
+    resume_stage:
+        - None  -> Normal run (start at INTAKE)
+        - 'RECONCILE' -> Resume HITL flow (skip earlier steps)
+    """
+
     workflow = StateGraph(dict)
 
-    workflow.set_entry_point("INTAKE")
+    # ⭐ DEFAULT entry point = INTAKE
+    entry = "INTAKE"
 
-    # register all nodes
+    # ⭐ If resuming after HITL, skip all early stages
+    if resume_stage is not None:
+        print(f"[GRAPH] Resuming workflow at: {resume_stage}")
+        entry = resume_stage
+
+    workflow.set_entry_point(entry)
+
+    # Register nodes
     workflow.add_node("INTAKE", intake_node)
     workflow.add_node("UNDERSTAND", understand_node)
     workflow.add_node("PREPARE", prepare_node)
@@ -36,13 +49,13 @@ def build_graph():
     workflow.add_node("NOTIFY", notify_node)
     workflow.add_node("COMPLETE", complete_node)
 
-    # define deterministic flow
+    # Deterministic edges
     workflow.add_edge("INTAKE", "UNDERSTAND")
     workflow.add_edge("UNDERSTAND", "PREPARE")
     workflow.add_edge("PREPARE", "RETRIEVE")
     workflow.add_edge("RETRIEVE", "MATCH_TWO_WAY")
 
-    # conditional branch
+    # Conditional branching
     workflow.add_conditional_edges(
         "MATCH_TWO_WAY",
         lambda state: "CHECKPOINT_HITL" if state["match_result"] == "FAILED" else "RECONCILE",
@@ -52,8 +65,10 @@ def build_graph():
         }
     )
 
-    workflow.add_edge("CHECKPOINT_HITL", END)  # HITL is async
+    # HITL pauses workflow
+    workflow.add_edge("CHECKPOINT_HITL", END)
 
+    # Resume workflow path
     workflow.add_edge("RECONCILE", "APPROVE")
     workflow.add_edge("APPROVE", "POSTING")
     workflow.add_edge("POSTING", "NOTIFY")

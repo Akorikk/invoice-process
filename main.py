@@ -1,28 +1,64 @@
+
 # main.py
 
+import argparse
 from app.graph_builder import build_graph
-from app.state_manager import StateManager
+from mcp.common_client import CommonClient
 from api.server import app
 import uvicorn
+import json
+
 
 def run_workflow(invoice_payload):
-
     print("\n================ INVOICE WORKFLOW STARTED ================\n")
 
-    graph = build_graph()
-
+    graph = build_graph()   # normal run
     state = {"invoice_payload": invoice_payload}
 
     result = graph.invoke(state)
 
-    print("\n================ WORKFLOW FINISHED ================\n")
-    print(result)
+    print("\n================ WORKFLOW PAUSED / FINISHED ================\n")
+    print(json.dumps(result, indent=2))
 
     return result
 
 
+def resume_workflow(state_file):
+    print("\n================ RESUMING WORKFLOW ================\n")
+
+    # Load existing state from checkpoint_state.json
+    state = json.load(open(state_file))
+
+    # ⭐ IMPORTANT FIX: Resume from RECONCILE
+    graph = build_graph(resume_stage="RECONCILE")
+
+    result = graph.invoke(state)
+
+    print("\n================ WORKFLOW COMPLETED ================\n")
+    print(json.dumps(result, indent=2))
+
+
+def start_api():
+    print("\nStarting HITL API server at http://127.0.0.1:8001\n")
+    uvicorn.run(app, host="127.0.0.1", port=8001)
+
+
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--resume", type=str, help="Resume workflow using checkpoint state file")
+    parser.add_argument("--api", action="store_true", help="Start HITL API server only")
+    args = parser.parse_args()
+
+    if args.api:
+        start_api()
+        exit()
+
+    if args.resume:
+        resume_workflow(args.resume)
+        exit()
+
+    # DEFAULT BEHAVIOR: RUN WORKFLOW FROM START
     sample_invoice = {
         "invoice_id": "INV-001",
         "vendor_name": "Acme Corporation",
@@ -35,9 +71,11 @@ if __name__ == "__main__":
         "attachments": ["invoice_image.png"]
     }
 
-    # Run the workflow
-    run_workflow(sample_invoice)
+    result = run_workflow(sample_invoice)
 
-    # Start API server in parallel (you can run separately)
-    print("\nStarting HITL API server at http://127.0.0.1:8000")
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    # Save state if MATCH FAILED
+    if "match_result" in result and result["match_result"] == "FAILED":
+        with open("checkpoint_state.json", "w") as f:
+            json.dump(result, f, indent=2)
+        print("\nCheckpoint saved to checkpoint_state.json")
+        print("Waiting for HITL decision...")

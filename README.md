@@ -57,3 +57,10 @@ If you want, I can:
 - Add a small script to produce a demo log file and sanitized outputs for submission.
 
 Enjoy — let me know which next step you want me to take.
+
+
+runn 
+python main.py
+python main.py --api
+python main.py --resume checkpoint_state.json
+
