@@ -1,18 +1,16 @@
-
 # main.py
 
 import argparse
 from app.graph_builder import build_graph
-from mcp.common_client import CommonClient
-from api.server import app
 import uvicorn
 import json
+from api.server import app
 
 
 def run_workflow(invoice_payload):
     print("\n================ INVOICE WORKFLOW STARTED ================\n")
 
-    graph = build_graph()   # normal run
+    graph = build_graph()   # start from INTAKE
     state = {"invoice_payload": invoice_payload}
 
     result = graph.invoke(state)
@@ -26,12 +24,11 @@ def run_workflow(invoice_payload):
 def resume_workflow(state_file):
     print("\n================ RESUMING WORKFLOW ================\n")
 
-    # Load existing state from checkpoint_state.json
+    # Load saved state (from checkpoint)
     state = json.load(open(state_file))
 
-    # ⭐ IMPORTANT FIX: Resume from RECONCILE
-    # Build graph and invoke with existing checkpoint state.
-    graph = build_graph()
+    # Resume from RECONCILE
+    graph = build_graph(resume_stage="RECONCILE")
 
     result = graph.invoke(state)
 
@@ -51,15 +48,17 @@ if __name__ == "__main__":
     parser.add_argument("--api", action="store_true", help="Start HITL API server only")
     args = parser.parse_args()
 
+    # Start API only
     if args.api:
         start_api()
         exit()
 
+    # Resume mode
     if args.resume:
         resume_workflow(args.resume)
         exit()
 
-    # DEFAULT BEHAVIOR: RUN WORKFLOW FROM START
+    # -------- NORMAL START MODE --------
     sample_invoice = {
         "invoice_id": "INV-001",
         "vendor_name": "Acme Corporation",
@@ -74,7 +73,7 @@ if __name__ == "__main__":
 
     result = run_workflow(sample_invoice)
 
-    # Save state if MATCH FAILED
+    # Save state if HITL required
     if "match_result" in result and result["match_result"] == "FAILED":
         with open("checkpoint_state.json", "w") as f:
             json.dump(result, f, indent=2)

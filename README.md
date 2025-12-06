@@ -99,3 +99,6 @@ python main.py --api
 curl -X POST "http://127.0.0.1:8000/human-review/decision" ^
 -H "Content-Type: application/json" ^
 -d "{\"checkpoint_id\": 10, \"decision\": \"ACCEPT\", \"reviewer_id\": \"demo_user\"}"
+
+
+python main.py --resume checkpoint_state_10.json
